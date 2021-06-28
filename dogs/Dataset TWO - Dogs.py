@@ -276,19 +276,19 @@ df[df.neighborhood == 'Upper East Side']['Animal Name'].value_counts().head(1)
 
 # ## What is the most common dog breed in each of the neighborhoods of NYC?
 
-# In[30]:
+# In[100]:
 
 
 # I did this 2 way. First, I use groupby(level=0) & .nlargest. Then created the new DataFrame.
 df_each = pd.DataFrame(df.groupby('neighborhood')['Primary Breed'].value_counts().groupby(level=0).nlargest(1))
-df_each
+df_each.reset_index(0,1)
 
 
-# In[46]:
+# In[35]:
 
 
 #Second, I created new DataFrame at the beginning, then groupby(level = 0) & .head
-df_each2 = pd.DataFrame(df.groupby('neighborhood')['Primary Breed'].value_counts())
+df_each2 = pd.DataFrame(df.groupby('neighborhood')['Primary Breed'].value_counts().reset_index(name= 'dog counts'))
 df_each2.groupby(level=0).head(1)
 
 
@@ -300,7 +300,7 @@ df_each2.groupby(level=0).head(1)
 
 # ## What breed of dogs are the least likely to be spayed? Male or female?
 
-# In[31]:
+# In[36]:
 
 
 import numpy as np
@@ -308,14 +308,14 @@ df['Spayed or Neut'] = df['Spayed or Neut'].replace(np.nan, 'No')  #I did. but o
 df['Spayed or Neut'].value_counts()
 
 
-# In[32]:
+# In[37]:
 
 
 df_nosp = df[df['Spayed or Neut'] == 'No']
 df_nosp['Primary Breed'].value_counts()
 
 
-# In[33]:
+# In[38]:
 
 
 df_nosp['Animal Gender'].value_counts()
@@ -326,7 +326,7 @@ df_nosp['Animal Gender'].value_counts()
 
 # ## Make a new column called monochrome that is True for any animal that only has black, white or grey as one of its colors. How many animals are monochrome?
 
-# In[34]:
+# In[39]:
 
 
 df_dc = df['Animal Dominant Color'].str.lower() .isin(['black', 'white','gray'])
@@ -341,7 +341,7 @@ df['monochrome'].value_counts()
 
 # ## How many dogs are in each borough? Plot it in a graph.
 
-# In[35]:
+# In[40]:
 
 
 df.borough.value_counts().plot(kind = 'barh')
@@ -351,14 +351,14 @@ df.borough.value_counts().plot(kind = 'barh')
 # 
 # You’ll need to merge in `population_boro.csv`
 
-# In[36]:
+# In[41]:
 
 
 df_pop = pd.read_csv("boro_population.csv")
 df_pop.head()
 
 
-# In[37]:
+# In[43]:
 
 
 df_borodog = pd.DataFrame(df.borough.value_counts())
@@ -366,13 +366,13 @@ df_borodog = df_borodog.reset_index()
 df_borodog.columns = ['borough', 'dogs']
 
 
-# In[38]:
+# In[44]:
 
 
 df_borodog = df_borodog.merge(df_pop , on= 'borough')
 
 
-# In[40]:
+# In[45]:
 
 
 df_borodog['dog_per_capita'] = df_borodog.dogs / df_borodog.population *100
@@ -386,21 +386,11 @@ df_borodog
 # 
 # How do you groupby and then only take the top X number? You **really** should ask me, because it's kind of crazy.
 
-# In[71]:
+# In[97]:
 
 
-df_top5 = pd.DataFrame(df.groupby('borough')['Primary Breed'].value_counts())
-df_top5.groupby(level=0).head(5).plot(kind = 'bar' , figsize=(12,6)  )
-
-# I aslo tried this. Almost same, but xlabel is less beautiful.
-# df_topf = pd.DataFrame(df.groupby('borough')['Primary Breed'].value_counts().groupby(level=0).nlargest(5))
-# df_topf.plot(kind = 'bar' , figsize=(12,6) )
-
-
-# In[ ]:
-
-
-
+df_top5 = pd.DataFrame(df.groupby('borough')['Primary Breed'].value_counts().groupby(level=0).nlargest(5))
+df_top5.reset_index(0).unstack().plot(kind = 'barh',  y = 'Primary Breed', figsize=(8, 8) )
 
 
 # ## What percentage of dogs are not guard dogs?
