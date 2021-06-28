@@ -410,10 +410,10 @@ bx = df_IPA.ABV.plot(kind = 'hist')
 df_wheat.ABV.plot(ax = bx , kind ='hist') 
 
 
-# In[100]:
+# In[101]:
 
 
-print (f"Mean of IPAs ABV is {round(df_IPA.ABV.mean(),1)}. Mean of Wheat beers ABV is {round(df_wheat.ABV.mean(),1)}.")
+print (f"Median of IPAs ABV is {df_IPA.ABV.median()}. Median of Wheat beers ABV is {df_wheat.ABV.median()}.")
 
 
 # ## Good work!
